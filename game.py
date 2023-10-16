@@ -6,6 +6,7 @@ import time
 from car import Car
 from human import Human
 from config import Config
+from traffic_light import Light
 
 pygame.init()
 
@@ -13,7 +14,6 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     QUIT,
-    
 )
 
 # screen config
@@ -27,8 +27,6 @@ movement_speed = 5
 
 # movement speed of the human
 human_movement_speed = 3
-
-
 
 def setup():
 
@@ -71,7 +69,7 @@ def loop(screen, clock):
             'scale'    : 2,
             'position' : (0, config.get_height() / 2 ),
             'x_update' : movement_speed,
-            'y_update' : 0
+            'y_update' : movement_speed * 0
         },
         # top car
         {
@@ -80,7 +78,7 @@ def loop(screen, clock):
             'rotate' : 90,
             'scale' : 2,
             'position' : (config.get_width() / 2, 0),
-            'x_update' : 0,
+            'x_update' : movement_speed * 0,
             'y_update' : movement_speed
         },
         # right car
@@ -91,7 +89,7 @@ def loop(screen, clock):
             'scale'    : 2,
             'position' : (config.get_width(), config.get_height() / 2 - 98),
             'x_update' : movement_speed * -1,
-            'y_update' : 0
+            'y_update' : movement_speed * 0
         },
         # bottom car
         {
@@ -100,14 +98,23 @@ def loop(screen, clock):
             'rotate' : 270,
             'scale' : 2,
             'position' : (config.get_width() / 2 - 98, config.get_height()),
-            'x_update' : 0,
+            'x_update' : movement_speed * 0,
             'y_update' : movement_speed * -1
         }       
     ]
 
     # config for humans
     humans = [
-
+        # bottom left human
+        {
+            'flip_x' : True,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 3,
+            'position': (295, config.get_height()-235),
+            'x_update' : human_movement_speed * 0,
+            'y_update' : human_movement_speed * -1
+        },
         # top left human
         {
             'flip_x' : True,
@@ -116,7 +123,7 @@ def loop(screen, clock):
             'scale' : 3,
             'position': (295,180),
             'x_update' : human_movement_speed,
-            'y_update' : 0
+            'y_update' : human_movement_speed * 0
         },
         # top right human
         {
@@ -125,7 +132,7 @@ def loop(screen, clock):
             'rotate' : 0,
             'scale' : 3,
             'position': (config.get_width() - 350, 185),
-            'x_update' : 0,
+            'x_update' : human_movement_speed * 0,
             'y_update' : human_movement_speed
         },
         # bottom right human
@@ -136,18 +143,54 @@ def loop(screen, clock):
             'scale' : 3,
             'position': (config.get_width()-350, config.get_height()-235),
             'x_update' : human_movement_speed * -1,
-            'y_update' : 0
+            'y_update' : human_movement_speed * 0
         },
-        # bottom left human
+      
+    ]
+
+    # config for the traffic lights
+    traffic_lights = [
+         # top left light
         {
             'flip_x' : True,
             'flip_y' : False,
             'rotate' : 0,
-            'scale' : 3,
-            'position': (295, config.get_height()-235),
-            'x_update' : 0,
-            'y_update' : human_movement_speed * -1
+            'scale' : 1.5,
+            'position': (249,150),
+            'light': "red",
+            'clock' : 8
         },
+        # top right light
+        {
+            'flip_x' : False,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 1.5,
+            'position': (config.get_width() - 303, 155),
+            'light' : 'green',
+            'clock' : 10
+        },
+        # bottom right light
+        {
+            'flip_x' : False,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 1.5,
+            'position': (config.get_width()-306, config.get_height()-205),
+            'light' : 'red',
+            'clock' : 8
+        },
+        # bottom left light
+        {
+            'flip_x' : True,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 1.5,
+            'position': (251, config.get_height()-205),
+            'light': 'green',
+            'clock' : 10
+
+        }
     ]
 
     # sprite group for cars
@@ -155,6 +198,9 @@ def loop(screen, clock):
 
     # sprite group for humans
     human_sprites = pygame.sprite.Group()
+    
+    # sprite group for traffic lights
+    traffic_light_sprites = pygame.sprite.Group()
 
     # create car object and add to group
     for car in cars:
@@ -165,6 +211,11 @@ def loop(screen, clock):
     for human in humans:
         human = Human(config=config, human_config=human) 
         human_sprites.add(human)
+
+    # create traffi light object and add to group
+    for traffic_light in traffic_lights:
+        traffic_light = Light(config=config, light_config=traffic_light)
+        traffic_light_sprites.add(traffic_light)
 
     # update loop
     while running:
@@ -178,11 +229,43 @@ def loop(screen, clock):
                 elif event.type == QUIT:
                     running = False
             
+            # get the current status of each traffic light
+            current_lights = []
+            for traffic_light_sprite in traffic_light_sprites:
+                current_lights.append(traffic_light_sprite.get_light())
+
+            # move car on top to bottom
+            # move car on bottom to top
+            # move human from bottom left to top left 
+            # move human from top right to bottom right
+            if current_lights[0] == 'green' and current_lights[2] == 'green':
+                movement_speeds = [(0, 0), (0, movement_speed), (0, 0), (0, movement_speed * -1)]
+                human_movement_speeds = [(0, human_movement_speed * -1), (0, 0), (0, human_movement_speed), (0, 0)]
+
+            # move car on left to right
+            # move car on right to left
+            # move human from top left to top right 
+            # move human from bottom right to bottom left
+            elif current_lights[1] == 'green' and current_lights[3] =='green': 
+                movement_speeds = [ (movement_speed, 0), (0, 0), (0, movement_speed * -1),  (0, 0)]
+                human_movement_speeds = [(0, 0), (human_movement_speed, 0), (0, 0), (human_movement_speed * -1, 0)]
+
+            # update the movement speed of each car
+            for index, car_sprite in enumerate(car_sprites):
+                car_sprite.set_movement_speed(movement_speeds[index])
+            
+            # update the movement speed of each human
+            for index, human_sprite in enumerate(human_sprites):
+                human_sprite.set_movement_speed(human_movement_speeds[index])
+
             # move the cars
             car_sprites.update()
 
             # move humans
             human_sprites.update()
+
+            # update traffic light
+            traffic_light_sprites.update()
 
             # clear the background picture
             screen.blit(bg, bg.get_rect(), bg.get_rect())
@@ -196,6 +279,10 @@ def loop(screen, clock):
                 screen.blit(bg, human_sprite.get_rect(), human_sprite.get_rect())
                 screen.blit(source = human_sprite.surf, dest = human_sprite.rect)
 
+            for traffic_light_sprite in traffic_light_sprites:
+                screen.blit(bg, traffic_light_sprite.get_rect(), traffic_light_sprite.get_rect())
+                screen.blit(source = traffic_light_sprite.surf, dest = traffic_light_sprite.rect)
+            
             # update display and set frame rate
             pygame.display.flip()
             clock.tick(60)

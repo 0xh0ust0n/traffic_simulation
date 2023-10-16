@@ -1,6 +1,4 @@
 import pygame
-from pygame.locals import RLEACCEL
-from config import Config
 
 class Human(pygame.sprite.Sprite):
     def __init__(self, config, human_config = None, screen = None) -> None:
@@ -22,7 +20,6 @@ class Human(pygame.sprite.Sprite):
         # place to the correct line
         self.rect = pygame.Rect(self.human_config['position'], (self.surf.get_size()))
 
-        print(self.surf.get_size())
     def update(self):
         
         # move the position of the human
@@ -40,8 +37,13 @@ class Human(pygame.sprite.Sprite):
 
         if self.rect.bottom < 180 + self.surf.get_height():
             self.rect.top = self.human_config['position'][1]
+
     # return the rectangle coordinates to draw
     def get_rect(self):
         return self.rect
 
+    # set the X and Y movement speed of the human
+    def set_movement_speed(self, speeds ):
+        self.human_config['x_update'] = speeds[0]
+        self.human_config['y_update'] = speeds[1]
         

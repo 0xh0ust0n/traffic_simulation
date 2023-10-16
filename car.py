@@ -45,4 +45,7 @@ class Car(pygame.sprite.Sprite):
     def get_rect(self):
         return self.rect
 
-        
+    # set the X and Y movement speed of the car
+    def set_movement_speed(self, speeds):
+        self.car_config['x_update'] = speeds[0]
+        self.car_config['y_update'] = speeds[1]
