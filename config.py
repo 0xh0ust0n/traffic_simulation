@@ -1,3 +1,5 @@
+import random
+
 class Config():
     
     def __init__(self, width = None, height = None) -> None:
@@ -16,3 +18,11 @@ class Config():
     def set_proportions(self, width, height):
         self.SCREEN_HEIGHT = height
         self.SCREEN_WIDTH = width
+
+def get_color():
+    red = random.randint(0, 255)
+    green = random.randint(0, 255)
+    blue = random.randint(0, 255)
+
+    return (red, green, blue)
+    

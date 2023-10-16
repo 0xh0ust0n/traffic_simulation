@@ -5,8 +5,8 @@ import time
 # custom packages
 from car import Car
 from human import Human
-from config import Config
 from traffic_light import Light
+from config import Config, get_color
 
 pygame.init()
 
@@ -59,48 +59,100 @@ def loop(screen, clock):
     global config
     running = True
     
+    # car movement speeds
+    # movement_speeds = [(movement_speed, 0), (0, movement_speed), (movement_speed * -1, 0), (0, movement_speed * -1)]
     # config for cars
     cars = [ 
-        # left car
+        # left car turn
         {
             'flip_x'   : True,
             'flip_y'   : False,
             'rotate'   : 0,
-            'scale'    : 2,
-            'position' : (0, config.get_height() / 2 ),
+            'scale'    : 1,
+            'position' : (0, config.get_height() / 2 - 20 ),
             'x_update' : movement_speed,
-            'y_update' : movement_speed * 0
+            'y_update' : movement_speed * 0,
+            'turn' : True
         },
-        # top car
+         # left car straight
+        {
+            'flip_x'   : True,
+            'flip_y'   : False,
+            'rotate'   : 0,
+            'scale'    : 1,
+            'position' : (0, config.get_height() / 2 + 50 ),
+            'x_update' : movement_speed,
+            'y_update' : movement_speed * 0,
+            'turn' : False
+        },
+        # top car turn
         {
             'flip_x' : False,
             'flip_y' : True,
             'rotate' : 90,
-            'scale' : 2,
-            'position' : (config.get_width() / 2, 0),
+            'scale' : 1,
+            'position' : (config.get_width() / 2 - 40, 0),
             'x_update' : movement_speed * 0,
-            'y_update' : movement_speed
+            'y_update' : movement_speed,
+            'turn' : True
         },
-        # right car
+        # top car straight
+        {
+            'flip_x' : False,
+            'flip_y' : True,
+            'rotate' : 90,
+            'scale' : 1,
+            'position' : (config.get_width() / 2 - 140, 0),
+            'x_update' : movement_speed * 0,
+            'y_update' : movement_speed,
+            'turn' : False
+        },
+        # right car straight
         {
             'flip_x'   : False,
             'flip_y'   : True,
             'rotate'   : 0,
-            'scale'    : 2,
-            'position' : (config.get_width(), config.get_height() / 2 - 98),
+            'scale'    : 1,
+            'position' : (config.get_width(), config.get_height() / 2 - 110),
             'x_update' : movement_speed * -1,
-            'y_update' : movement_speed * 0
+            'y_update' : movement_speed * 0,
+            'turn' : False
+        },
+        # right car turn
+        {
+            'flip_x'   : False,
+            'flip_y'   : True,
+            'rotate'   : 0,
+            'scale'    : 1,
+            'position' : (config.get_width(), config.get_height() / 2 - 25),
+            'x_update' : movement_speed * -1,
+            'y_update' : movement_speed * 0,
+            'turn' : True
         },
         # bottom car
         {
             'flip_x' : False,
             'flip_y' : False,
             'rotate' : 270,
-            'scale' : 2,
-            'position' : (config.get_width() / 2 - 98, config.get_height()),
+            'scale' : 1,
+            'position' : (config.get_width() / 2 + 75, config.get_height()),
             'x_update' : movement_speed * 0,
-            'y_update' : movement_speed * -1
-        }       
+            'y_update' : movement_speed * -1,
+            'turn' : False
+
+        },
+        # bottom car
+        {
+            'flip_x' : False,
+            'flip_y' : False,
+            'rotate' : 270,
+            'scale' : 1,
+            'position' : (config.get_width() / 2 - 30, config.get_height()),
+            'x_update' : movement_speed * 0,
+            'y_update' : movement_speed * -1,
+            'turn' : True
+
+        }              
     ]
 
     # config for humans
@@ -239,15 +291,15 @@ def loop(screen, clock):
             # move human from bottom left to top left 
             # move human from top right to bottom right
             if current_lights[0] == 'green' and current_lights[2] == 'green':
-                movement_speeds = [(0, 0), (0, movement_speed), (0, 0), (0, movement_speed * -1)]
-                human_movement_speeds = [(0, human_movement_speed * -1), (0, 0), (0, human_movement_speed), (0, 0)]
+                movement_speeds = [(0, 0), (0, 0), (0, movement_speed), (0, movement_speed), (0, 0),  (0, 0), (0, movement_speed * -1),  (0, movement_speed * -1)]
+                human_movement_speeds = [(0, human_movement_speed * -1), (0, 0), (0, human_movement_speed * 1 ), (0, 0)]
 
             # move car on left to right
             # move car on right to left
             # move human from top left to top right 
             # move human from bottom right to bottom left
             elif current_lights[1] == 'green' and current_lights[3] =='green': 
-                movement_speeds = [ (movement_speed, 0), (0, 0), (0, movement_speed * -1),  (0, 0)]
+                movement_speeds = [ (movement_speed, 0), (movement_speed, 0), (0, 0), (0, 0), (movement_speed * -1, 0),(movement_speed * -1, 0),   (0, 0), (0, 0)]
                 human_movement_speeds = [(0, 0), (human_movement_speed, 0), (0, 0), (human_movement_speed * -1, 0)]
 
             # update the movement speed of each car
@@ -271,8 +323,12 @@ def loop(screen, clock):
             screen.blit(bg, bg.get_rect(), bg.get_rect())
 
             # update the background image and cars
-            for car_sprite in car_sprites:
+            for index, car_sprite in enumerate(car_sprites):
+                print("----------------")
+                print(f"Index: {index}")
                 screen.blit(bg, car_sprite.get_rect(), car_sprite.get_rect())
+                print("----------------")
+
                 screen.blit(source = car_sprite.surf, dest = car_sprite.rect)
 
             for human_sprite in human_sprites:
