@@ -1,8 +1,8 @@
 class Config():
     
-    def __init__(self) -> None:
-        self.SCREEN_WIDTH = 500
-        self.SCREEN_HEIGHT = 500
+    def __init__(self, width = None, height = None) -> None:
+        self.SCREEN_WIDTH = width or 500
+        self.SCREEN_HEIGHT = height or 500
 
     def get_proportions(self):
         return (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
@@ -12,3 +12,7 @@ class Config():
     
     def get_height(self):
         return self.SCREEN_HEIGHT
+    
+    def set_proportions(self, width, height):
+        self.SCREEN_HEIGHT = height
+        self.SCREEN_WIDTH = width
