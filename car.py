@@ -11,17 +11,18 @@ class Car(pygame.sprite.Sprite):
 
         # import an image and flip around Y axis (Keep y and change X's)
         image = pygame.transform.flip(pygame.image.load("./assets/car.png"), flip_x=self.car_config['flip_x'], flip_y=self.car_config['flip_y'])
-        
+
+        # rotate an image
         image = pygame.transform.rotate(image, self.car_config['rotate'])
         self.surf = image.convert_alpha()
 
-        # resize the image by two
+        # resize the image
         self.surf = pygame.transform.smoothscale_by(self.surf, self.car_config['scale'])
 
         # place to the correct line
         self.rect = pygame.Rect(self.car_config['position'], (self.surf.get_size()))
 
-        print(self.surf.get_size())
+        # print(self.surf.get_size())
     def update(self):
         
         # move the position of the car

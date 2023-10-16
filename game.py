@@ -4,7 +4,9 @@ import time
 
 # custom packages
 from car import Car
+from human import Human
 from config import Config
+
 pygame.init()
 
 from pygame.locals import (
@@ -20,8 +22,11 @@ config = None
 # background picture
 bg = None
 
-# movement speed of the objects
+# movement speed of the cars
 movement_speed = 5
+
+# movement speed of the human
+human_movement_speed = 3
 
 
 
@@ -37,6 +42,8 @@ def setup():
     # get background image
     global bg
     bg = pygame.image.load("./assets/intersection.png").convert()
+    
+    print(f"Width: {bg.get_width()}; Height: {bg.get_height()}")
 
     # update the display size to background picture dimensions
     config.set_proportions(bg.get_width(), bg.get_height())
@@ -56,6 +63,7 @@ def loop(screen, clock):
     
     # config for cars
     cars = [ 
+        # left car
         {
             'flip_x'   : True,
             'flip_y'   : False,
@@ -65,6 +73,7 @@ def loop(screen, clock):
             'x_update' : movement_speed,
             'y_update' : 0
         },
+        # top car
         {
             'flip_x' : False,
             'flip_y' : True,
@@ -74,6 +83,7 @@ def loop(screen, clock):
             'x_update' : 0,
             'y_update' : movement_speed
         },
+        # right car
         {
             'flip_x'   : False,
             'flip_y'   : True,
@@ -83,6 +93,7 @@ def loop(screen, clock):
             'x_update' : movement_speed * -1,
             'y_update' : 0
         },
+        # bottom car
         {
             'flip_x' : False,
             'flip_y' : False,
@@ -94,14 +105,67 @@ def loop(screen, clock):
         }       
     ]
 
+    # config for humans
+    humans = [
+
+        # top left human
+        {
+            'flip_x' : True,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 3,
+            'position': (295,180),
+            'x_update' : human_movement_speed,
+            'y_update' : 0
+        },
+        # top right human
+        {
+            'flip_x' : False,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 3,
+            'position': (config.get_width() - 350, 185),
+            'x_update' : 0,
+            'y_update' : human_movement_speed
+        },
+        # bottom right human
+        {
+            'flip_x' : False,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 3,
+            'position': (config.get_width()-350, config.get_height()-235),
+            'x_update' : human_movement_speed * -1,
+            'y_update' : 0
+        },
+        # bottom left human
+        {
+            'flip_x' : True,
+            'flip_y' : False,
+            'rotate' : 0,
+            'scale' : 3,
+            'position': (295, config.get_height()-235),
+            'x_update' : 0,
+            'y_update' : human_movement_speed * -1
+        },
+    ]
+
     # sprite group for cars
     car_sprites = pygame.sprite.Group()
 
-    # create car object and addt to group
+    # sprite group for humans
+    human_sprites = pygame.sprite.Group()
+
+    # create car object and add to group
     for car in cars:
         car = Car(config = config, car_config=car)
         car_sprites.add(car)
-    
+
+    # create human object and add to group
+    for human in humans:
+        human = Human(config=config, human_config=human) 
+        human_sprites.add(human)
+
     # update loop
     while running:
 
@@ -117,6 +181,9 @@ def loop(screen, clock):
             # move the cars
             car_sprites.update()
 
+            # move humans
+            human_sprites.update()
+
             # clear the background picture
             screen.blit(bg, bg.get_rect(), bg.get_rect())
 
@@ -124,6 +191,10 @@ def loop(screen, clock):
             for car_sprite in car_sprites:
                 screen.blit(bg, car_sprite.get_rect(), car_sprite.get_rect())
                 screen.blit(source = car_sprite.surf, dest = car_sprite.rect)
+
+            for human_sprite in human_sprites:
+                screen.blit(bg, human_sprite.get_rect(), human_sprite.get_rect())
+                screen.blit(source = human_sprite.surf, dest = human_sprite.rect)
 
             # update display and set frame rate
             pygame.display.flip()
