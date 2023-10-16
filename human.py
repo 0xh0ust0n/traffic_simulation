@@ -44,6 +44,10 @@ class Human(pygame.sprite.Sprite):
 
     # set the X and Y movement speed of the human
     def set_movement_speed(self, speeds ):
-        self.human_config['x_update'] = speeds[0]
-        self.human_config['y_update'] = speeds[1]
-        
+  
+        if speeds[0] != self.human_config['x_update'] or speeds[1] != self.human_config['y_update']:
+            self.rect.left = self.human_config['position'][0]
+            self.rect.top = self.human_config['position'][1]
+
+            self.human_config['x_update'] = speeds[0]
+            self.human_config['y_update'] = speeds[1]
