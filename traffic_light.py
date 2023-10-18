@@ -43,10 +43,10 @@ class Light(pygame.sprite.Sprite):
                 self.clock = 8 * 60
             elif self.light_config['light'] == 'red':
                 self.light_config['light'] = 'yellow'
-                self.clock = 2 * 60
+                self.clock = 5 * 60
             elif self.light_config['light'] == 'yellow':
                 self.light_config['light'] = 'green'
-                self.clock = 10 * 60
+                self.clock = 13 * 60
 
             # change the image
             self.surf = self.set_image()

@@ -34,12 +34,14 @@ class Car(pygame.sprite.Sprite):
         if self.light == "green":
             self.rect.move_ip(self.x_update, self.y_update)
 
+        if self.light == 'yellow' and not ( self.rect.left > self.config.get_width() or self.rect.right < 0 or self.rect.top > self.config.get_height() or self.rect.bottom < 0 ):
+            self.rect.move_ip(self.x_update, self.y_update)
+
+        
         # if turn config is enabled
         if self.turn:
             
             # if the car is in the right area for turn 
-
-            
             if abs(self.rect.left - self.car_config['position'][0]) > self.car_config['turn_position'][0] or abs(self.rect.top - self.car_config['position'][1]) > self.car_config['turn_position'][1]:
             # if self.rect.left in range(int(self.config.get_width() / 2 + 75 - 15), int(self.config.get_width() / 2 + 75 + 15) ):
                 
@@ -55,17 +57,17 @@ class Car(pygame.sprite.Sprite):
 
         # check boundaries and update and reset the configuration
         if self.rect.left > self.config.get_width():
-            self.surf = self.reset()
-             
+            if self.light == 'green':
+                self.surf = self.reset()
         if self.rect.top > self.config.get_height():
-            self.surf = self.reset()
-
+            if self.light == 'green':
+                self.surf = self.reset()    
         if self.rect.right < 0:
-            self.surf = self.reset()
-
+            if self.light == 'green':
+                self.surf = self.reset()
         if self.rect.bottom < 0:
-            self.surf = self.reset()
-
+            if self.light == 'green':
+                self.surf = self.reset()
 
     # return the rectangle coordinates to draw
     def get_rect(self):

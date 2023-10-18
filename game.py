@@ -228,7 +228,7 @@ def loop(screen, clock):
             'scale' : 1.5,
             'position': (config.get_width() - 303, 155),
             'light' : 'green',
-            'clock' : 10
+            'clock' : 13
         },
         # bottom right light
         {
@@ -248,8 +248,7 @@ def loop(screen, clock):
             'scale' : 1.5,
             'position': (251, config.get_height()-205),
             'light': 'green',
-            'clock' : 10
-
+            'clock' : 13
         }
     ]
 
@@ -307,31 +306,50 @@ def loop(screen, clock):
             # move human from top right to bottom right
             if current_lights[0] == 'green' and current_lights[2] == 'green':
                 
-                # config for horizontal cars
-                for car in horizontal_car_sprites:
-                    car.set_light('red')
-
                 # config for vertical cars
                 for car in vertical_car_sprites:
                     car.set_light('green')
 
-                human_movement_speeds = [(0, human_movement_speed * -1), (0, 0), (0, human_movement_speed * 1 ), (0, 0)]
+                # set yellow for the horizontal cars
+                if current_lights[1] == 'yellow' and current_lights[3] == 'yellow':
+                    for car in vertical_car_sprites:
+                        car.set_light('yellow')        
+                else:
+                    # config for horizontal cars
+                    for car in horizontal_car_sprites:
+                        car.set_light('red')
 
+
+                human_movement_speeds = [(0, human_movement_speed * -1), (0, 0), (0, human_movement_speed * 1 ), (0, 0)]
+    
             # move horizontal cars and stop vertical
             # move human from top left to top right 
             # move human from bottom right to bottom left
             elif current_lights[1] == 'green' and current_lights[3] =='green': 
 
+
                 # config for horizontal cars
                 for car in horizontal_car_sprites:
                     car.set_light('green')
-
-                # config for vertical cars
-                for car in vertical_car_sprites:
-                    car.set_light('red')
+                
+                if current_lights[0] == 'yellow' and current_lights[2] == 'yellow':
+                    for car in horizontal_car_sprites:
+                        car.set_light('yellow')
+                else:            
+                    # config for vertical cars
+                    for car in vertical_car_sprites:
+                        car.set_light('red')
 
                 human_movement_speeds = [(0, 0), (human_movement_speed, 0), (0, 0), (human_movement_speed * -1, 0)]
-            
+    
+            # for index in range(len(current_lights) // 2):
+            #     if index % 2 == 0:
+            #         for car in vertical_car_sprites:
+            #             car.set_light(current_lights[index])
+            #     else:
+            #         for car in horizontal_car_sprites:
+            #             car.set_light(current_lights[index])
+
             # update the movement speed of each human
             for index, human_sprite in enumerate(human_sprites):
                 human_sprite.set_movement_speed(human_movement_speeds[index])
