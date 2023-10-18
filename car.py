@@ -34,7 +34,8 @@ class Car(pygame.sprite.Sprite):
         if self.light == "green":
             self.rect.move_ip(self.x_update, self.y_update)
 
-        if self.light == 'yellow' and not ( self.rect.left > self.config.get_width() or self.rect.right < 0 or self.rect.top > self.config.get_height() or self.rect.bottom < 0 ):
+        if self.light == 'yellow' :
+        # and not ( self.rect.left > self.config.get_width() or self.rect.right < 0 or self.rect.top > self.config.get_height() or self.rect.bottom < 0 ):
             self.rect.move_ip(self.x_update, self.y_update)
 
         
@@ -59,15 +60,27 @@ class Car(pygame.sprite.Sprite):
         if self.rect.left > self.config.get_width():
             if self.light == 'green':
                 self.surf = self.reset()
+            if self.light == 'yellow':
+                self.rect.move_ip(self.x_update, self.y_update)
+                
+
         if self.rect.top > self.config.get_height():
             if self.light == 'green':
                 self.surf = self.reset()    
+            if self.light == 'yellow':
+                self.rect.move_ip(self.x_update, self.y_update)
+
         if self.rect.right < 0:
             if self.light == 'green':
                 self.surf = self.reset()
+            if self.light == 'yellow':
+                self.rect.move_ip(self.x_update, self.y_update)
+
         if self.rect.bottom < 0:
             if self.light == 'green':
                 self.surf = self.reset()
+            if self.light == 'yellow':
+                self.rect.move_ip(self.x_update, self.y_update)
 
     # return the rectangle coordinates to draw
     def get_rect(self):
