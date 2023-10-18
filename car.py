@@ -1,3 +1,4 @@
+import math
 import pygame
 from pygame.locals import RLEACCEL
 from config import Config, get_color
@@ -10,110 +11,100 @@ class Car(pygame.sprite.Sprite):
         self.car_config = car_config
 
         # convert the image and set it to the surface        
-        self.surf = self.set_image()
-
-        # place to the correct line
-        self.rect = pygame.Rect(self.car_config['position'], (self.surf.get_size()))
+        self.surf = self.reset()
 
         # to indicate whether the car has to turn or not
         self.turn = self.car_config['turn']
 
         # the degree of turning
         self.degree = 90
-        # print(self.surf.get_size())
+
+        # current light of the traffic light for the car
+        self.light = 'red'
+
+        # x speed
+        self.x_update = car_config['x_update']
+
+        # y speed
+        self.y_update = car_config['y_update']
 
     def update(self):
         
-        if self.turn == True:
-            if self.rect.right >= self.config.get_width() / 2:
-                self.surf = self.set_image(turn = True)
+        # move if the light is green
+        if self.light == "green":
+            self.rect.move_ip(self.x_update, self.y_update)
+
+        # if turn config is enabled
+        if self.turn:
+            
+            # if the car is in the right area for turn 
+
+            
+            if abs(self.rect.left - self.car_config['position'][0]) > self.car_config['turn_position'][0] or abs(self.rect.top - self.car_config['position'][1]) > self.car_config['turn_position'][1]:
+            # if self.rect.left in range(int(self.config.get_width() / 2 + 75 - 15), int(self.config.get_width() / 2 + 75 + 15) ):
+                
+                # disable turn configuration
                 self.turn = not self.turn
 
-                car_config = self.car_config.copy()
+                # rotate the car
+                self.surf = pygame.transform.rotate(self.surf, 90)
+                
+                # update speed of the car
+                self.x_update, self.y_update = self.y_update, -1 * self.x_update
 
-                print(f"X_update: {self.car_config['x_update']}, Y_update: {self.car_config['y_update']}")
 
-                car_config['y_update'] = self.car_config['x_update']
-                car_config['x_update'] = self.car_config['y_update']
-
-                print(f"X_update: {self.car_config['x_update']}, Y_update: {self.car_config['y_update']}")
-
-                self.car_config = car_config
-                # self.car_config['x_update'], self.car_config['y_update'] = self.car_config['y_update'], self.car_config['x_update']
-            else: 
-                self.rect.move_ip(self.car_config['x_update'], self.car_config['y_update'])
-
-        else:
-                # move the position of the car
-                self.rect.move_ip(self.car_config['x_update'], self.car_config['y_update'])
-
-        # check boundaries and update 
+        # check boundaries and update and reset the configuration
         if self.rect.left > self.config.get_width():
-            self.rect.right = 0
-            self.surf = self.set_image(turn = False)
-            self.turn = not self.turn
+            self.surf = self.reset()
              
-
         if self.rect.top > self.config.get_height():
-            self.rect.bottom = 0
-            self.surf = self.set_image(turn = False)
-            self.turn = not self.turn
+            self.surf = self.reset()
 
         if self.rect.right < 0:
-            self.rect.left = self.config.get_width()
-            self.surf = self.set_image(turn = False)
-            self.turn = not self.turn
-
+            self.surf = self.reset()
 
         if self.rect.bottom < 0:
-            self.rect.top = self.config.get_height()
-            self.surf = self.set_image(turn = False)
-            self.turn = not self.turn
+            self.surf = self.reset()
 
 
     # return the rectangle coordinates to draw
     def get_rect(self):
-        print(self.rect)
-        print("----------------")
 
         return self.rect
 
-    # set the X and Y movement speed of the car
-    def set_movement_speed(self, speeds):
-        
-        if speeds[0] != self.car_config['x_update'] or speeds[1] != self.car_config['y_update']:
-            self.rect.left = self.car_config['position'][0] 
-            self.rect.top = self.car_config['position'][1]
-
-            self.rect.top = self.rect.top - self.car_config['position'][0] / 2
-            if self.rect.bottom >= self.config.get_height():
-                print(True)
-
-            self.rect.width = self.rect.top - self.surf.get_width() / 2
-            if self.rect.left >= self.config.get_width():
-                print(True)
-
-            self.rect = pygame.Rect(self.car_config['position'], (self.surf.get_size()))
-
-            self.car_config['x_update'] = speeds[0]
-            self.car_config['y_update'] = speeds[1]
-
-    # set color
-    def set_image(self, turn = None):
+    # reset the coordinates of car object
+    def reset(self, degree = None):
         # import an image and flip around Y axis (Keep y and change X's)
         image = pygame.transform.flip(pygame.image.load("./assets/car.png"), flip_x=self.car_config['flip_x'], flip_y=self.car_config['flip_y'])
 
-        # rotate an image
-        if turn:
-            image = pygame.transform.rotate(image, 270)
-        else:
-            image = pygame.transform.rotate(image, self.car_config['rotate'])
+        # rotate the image
+        image = pygame.transform.rotate(image, self.car_config['rotate'])
+
+        # generate a color for the car
         colors = get_color()
         image.fill(color=colors, special_flags=pygame.BLEND_MULT)
 
+        # create the surface
         surf = image.convert_alpha()
 
         # resize the image
         surf = pygame.transform.smoothscale_by(surf, self.car_config['scale'])
 
+        # put car in the start coordinates
+        self.rect = pygame.Rect(self.car_config['position'], (surf.get_size()))
+
+        # assign turn status
+        self.turn = self.car_config['turn']
+
+        # reset speed configurations
+
+        self.y_update = self.car_config['y_update']
+        self.x_update = self.car_config['x_update']
+        
         return surf
+
+    def set_light(self, light):
+        self.light = light
+
+    def get_status(self):
+        return self.status
