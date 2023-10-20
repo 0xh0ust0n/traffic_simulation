@@ -34,19 +34,26 @@ def is_hit(car_l, car_r, up = False, down = False):
             car_r.stop_car() 
             # return False
 
-def is_hit_triange(car_l, car_r):
+# compute pythagorean distance between 2 cars
+def is_hit_triange(car_l, car_r, up=True):
     car_l_vector = pygame.math.Vector2(car_l.rect.top, car_l.rect.right)     
     car_r_vector = pygame.math.Vector2(car_r.rect.top, car_r.rect.left)     
 
     distance = car_l_vector.distance_to(car_r_vector)
+    if up == False:
+        if distance < 200:
+            print(f"Car distance: {distance}")
+            car_l.stop_car()
+        elif distance > 200 and distance < 250:
+            car_l.start_car()
+    else:
+        if car_l.rect.bottom > config.get_height() /2 and car_r.rect.top < config.get_height() / 2:
+            if distance < 150:  
+                car_r.stop_car()    
+            elif distance > 150 and distance < 250: 
+                car_r.start_car()   
 
-    if distance < 200:
-        print(f"Car distance: {distance}")
-        car_l.stop_car()
-    elif distance > 200 and distance < 250:
-        car_l.start_car()
-
-
+# compute pythagorean distance between car and pedestrian
 def is_hit_pedestrian(pedestrian, car):
     car_vector = pygame.math.Vector2(car.rect.top, car.rect.left)
     pedestrian_vector = pygame.math.Vector2(pedestrian.rect.top, pedestrian.rect.left)
@@ -418,24 +425,15 @@ def loop(screen, clock):
                 for car in vertical_car_sprites:
                     car.set_light('red')  
 
-            
-            # if horizontal_car_sprites.sprites()[2].get_height() != car.get_height():
-            #     horizontal_car_sprites.sprites()[2].start()
-                    
-
-            # # update the movement speed of each human
-            # for index, human_sprite in enumerate(human_sprites):
-            #     human_sprite.set_movement_speed(human_movement_speeds[index])
-
             # print( horizontal_car_sprites.sprites()[0].get_height() - horizontal_car_sprites.sprites()[3].get_height() )
             is_hit(horizontal_car_sprites.sprites()[0], horizontal_car_sprites.sprites()[3])
             
             is_hit(vertical_car_sprites.sprites()[0], vertical_car_sprites.sprites()[3], up=True)
             
+            is_hit_triange(vertical_car_sprites.sprites()[3], vertical_car_sprites.sprites()[1], up=True)
+            
             is_hit_triange(horizontal_car_sprites.sprites()[1], horizontal_car_sprites.sprites()[3])
-            # if res == True:
-            #     print('Left stopped')
-
+     
             if is_hit_pedestrian(human_sprites.sprites()[0], vertical_car_sprites.sprites()[3]) < 60:
                 human_sprites.sprites()[0].set_movement_speed(3)
 
@@ -446,7 +444,7 @@ def loop(screen, clock):
                 human_sprites.sprites()[2].set_movement_speed(3)
 
             if is_hit_pedestrian(human_sprites.sprites()[2], horizontal_car_sprites.sprites()[1]) < 60:
-                human_sprites.sprites()[1].set_movement_speed(3)
+                human_sprites.sprites()[2].set_movement_speed(3)
 
             if is_hit_pedestrian(human_sprites.sprites()[3], horizontal_car_sprites.sprites()[3]) < 60:
                 human_sprites.sprites()[3].set_movement_speed(3)
