@@ -39,13 +39,13 @@ class Light(pygame.sprite.Sprite):
         # otherwise change the light
         else:
             if self.light_config['light'] == 'green':
-                self.light_config['light'] = 'red'
-                self.clock = 8 * 60
-            elif self.light_config['light'] == 'red':
                 self.light_config['light'] = 'yellow'
                 self.clock = 5 * 60
-            elif self.light_config['light'] == 'yellow':
+            elif self.light_config['light'] == 'red':
                 self.light_config['light'] = 'green'
+                self.clock = 8 * 60
+            elif self.light_config['light'] == 'yellow':
+                self.light_config['light'] = 'red'
                 self.clock = 13 * 60
 
             # change the image

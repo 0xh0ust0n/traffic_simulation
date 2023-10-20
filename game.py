@@ -16,6 +16,30 @@ from pygame.locals import (
     QUIT,
 )
 
+def is_hit(car_l, car_r, up = False):
+    print(car_r)
+    
+    if not up:
+        if car_l.rect.top <= car_r.rect.top:
+            car_r.start_car()
+        else:
+            car_r.stop_car()
+    else:
+        if car_l.rect.left >= car_r.rect.left:
+            car_r.start_car()
+        else:
+            car_r.stop_car() 
+
+def is_hit_pedestrian(car, pedestrian):
+    car_vector = pygame.math.Vector2(car.rect.top, car.rect.left)
+    pedestrian_vector = pygame.math.Vector2(pedestrian.rect.top, pedestrian.rect.left)
+
+    distance = pedestrian_vector.distance_to(car_vector)
+
+    if distance < 30:
+        print(f"Distance: {distance}")
+    return distance
+
 # screen config
 config = None
 
@@ -71,7 +95,9 @@ def loop(screen, clock):
             'x_update' : movement_speed,
             'y_update' : movement_speed * 0,
             'turn' : True,
-            'turn_position': (config.get_width() / 2 + 75, config.get_height() / 2 - 20)
+            'turn_position': (config.get_width() / 2 + 75, config.get_height() / 2 - 20),
+            'start' : 1
+
         },
          # left car straight
         {
@@ -82,7 +108,9 @@ def loop(screen, clock):
             'position' : (0, config.get_height() / 2 + 50 ),
             'x_update' : movement_speed,
             'y_update' : movement_speed * 0,
-            'turn' : False
+            'turn' : False,
+            'start' : 1
+
         },
 
       # right car straight
@@ -92,9 +120,11 @@ def loop(screen, clock):
             'rotate'   : 0,
             'scale'    : 1,
             'position' : (config.get_width() - 50, config.get_height() / 2 - 110),
-            'x_update' : movement_speed * -1,
+            'x_update' : movement_speed * -1*1.8 ,
             'y_update' : movement_speed * 0,
-            'turn' : False
+            'turn' : False,
+            'start' : 1
+
         },
         # right car turn
         {
@@ -102,11 +132,12 @@ def loop(screen, clock):
             'flip_y'   : True,
             'rotate'   : 0,
             'scale'    : 1,
-            'position' : (config.get_width()- 150, config.get_height() / 2 - 30),
-            'x_update' : movement_speed * -1,
+            'position' : (config.get_width() - 80, config.get_height() / 2 - 30),
+            'x_update' : movement_speed * -1 *1.8,
             'y_update' : movement_speed * 0,
+            'turn_position': (config.get_width() / 2 + 150/2, config.get_height() / 2 - 30),
             'turn' : True,
-            'turn_position': (config.get_width() / 2, config.get_height() / 2 - 30)
+            'start' : 0
 
         },
     ]
@@ -123,7 +154,9 @@ def loop(screen, clock):
             'x_update' : movement_speed * 0,
             'y_update' : movement_speed,
             'turn' : True,
-            'turn_position': (config.get_width() / 2 - 40, config.get_height() / 2 + 55)
+            'turn_position': (config.get_width() / 2 - 40, config.get_height() / 2 + 55),
+            'start' : 1
+
 
         },
         # top car straight
@@ -135,7 +168,8 @@ def loop(screen, clock):
             'position' : (config.get_width() / 2 - 140, 0),
             'x_update' : movement_speed * 0,
             'y_update' : movement_speed,
-            'turn' : False
+            'turn' : False,
+            'start' : 1
         },
         # bottom car straight
         {
@@ -145,8 +179,9 @@ def loop(screen, clock):
             'scale' : 1,
             'position' : (config.get_width() / 2 + 75, config.get_height() - 150),
             'x_update' : movement_speed * 0,
-            'y_update' : movement_speed * -1,
-            'turn' : False
+            'y_update' : movement_speed * -1 * 1.5,
+            'turn' : False,
+            'start' : 1
         },
         # bottom car turn
         {
@@ -156,10 +191,10 @@ def loop(screen, clock):
             'scale' : 1,
             'position' : (config.get_width() / 2 - 30, config.get_height() - 150),
             'x_update' : movement_speed * 0,
-            'y_update' : movement_speed * -1,
+            'y_update' : movement_speed * -1 * 1.2,
             'turn' : True,
-            'turn_position': (config.get_width() / 2 - 30, config.get_height() / 2 - 50)
-
+            'turn_position': (config.get_width() / 2 - 30, config.get_height() / 2 - 50),
+            'start' : 0
         }              
     ]
 
@@ -218,7 +253,7 @@ def loop(screen, clock):
             'scale' : 1.5,
             'position': (249,150),
             'light': "red",
-            'clock' : 8
+            'clock' : 13
         },
         # top right light
         {
@@ -228,7 +263,7 @@ def loop(screen, clock):
             'scale' : 1.5,
             'position': (config.get_width() - 303, 155),
             'light' : 'green',
-            'clock' : 13
+            'clock' : 8
         },
         # bottom right light
         {
@@ -238,7 +273,7 @@ def loop(screen, clock):
             'scale' : 1.5,
             'position': (config.get_width()-306, config.get_height()-205),
             'light' : 'red',
-            'clock' : 8
+            'clock' : 13
         },
         # bottom left light
         {
@@ -248,7 +283,7 @@ def loop(screen, clock):
             'scale' : 1.5,
             'position': (251, config.get_height()-205),
             'light': 'green',
-            'clock' : 13
+            'clock' : 8
         }
     ]
 
@@ -310,49 +345,83 @@ def loop(screen, clock):
                 for car in vertical_car_sprites:
                     car.set_light('green')
 
-                # set yellow for the horizontal cars
-                if current_lights[1] == 'yellow' and current_lights[3] == 'yellow':
-                    for car in vertical_car_sprites:
-                        car.set_light('yellow')        
-                else:
-                    # config for horizontal cars
-                    for car in horizontal_car_sprites:
-                        car.set_light('red')
+                # config for horizontal cars
+                for car in horizontal_car_sprites:
+                    car.set_light('red')
 
+                human_sprites.sprites()[0].set_light('green')
+                human_sprites.sprites()[2].set_light('green')
+
+                human_sprites.sprites()[1].set_light('red')
+                human_sprites.sprites()[3].set_light('red')
 
                 human_movement_speeds = [(0, human_movement_speed * -1), (0, 0), (0, human_movement_speed * 1 ), (0, 0)]
+            
+            elif current_lights[0] == 'yellow' and current_lights[2] == 'yellow':
+                
+                # set yellow for the vertical cars
+                for car in vertical_car_sprites:
+                    car.set_light('yellow')     
+
+                # config for horizontal cars
+                for car in horizontal_car_sprites:
+                    car.set_light('red')   
     
             # move horizontal cars and stop vertical
             # move human from top left to top right 
             # move human from bottom right to bottom left
             elif current_lights[1] == 'green' and current_lights[3] =='green': 
 
+                # config for vertical cars
+                for car in vertical_car_sprites:
+                    car.set_light('red')
 
                 # config for horizontal cars
                 for car in horizontal_car_sprites:
+
                     car.set_light('green')
-                
-                if current_lights[0] == 'yellow' and current_lights[2] == 'yellow':
-                    for car in horizontal_car_sprites:
-                        car.set_light('yellow')
-                else:            
-                    # config for vertical cars
-                    for car in vertical_car_sprites:
-                        car.set_light('red')
 
+                human_sprites.sprites()[1].set_light('green')
+                human_sprites.sprites()[3].set_light('green')
+
+                human_sprites.sprites()[0].set_light('red')
+                human_sprites.sprites()[2].set_light('red')
                 human_movement_speeds = [(0, 0), (human_movement_speed, 0), (0, 0), (human_movement_speed * -1, 0)]
-    
-            # for index in range(len(current_lights) // 2):
-            #     if index % 2 == 0:
-            #         for car in vertical_car_sprites:
-            #             car.set_light(current_lights[index])
-            #     else:
-            #         for car in horizontal_car_sprites:
-            #             car.set_light(current_lights[index])
+                
+            elif current_lights[1] == 'yellow' and current_lights[3] == 'yellow':
+                # set yellow for horizontal cars
+                for car in horizontal_car_sprites:
+                    car.set_light('yellow')
+                
+                # config for horizontal cars
+                for car in vertical_car_sprites:
+                    car.set_light('red')  
 
-            # update the movement speed of each human
-            for index, human_sprite in enumerate(human_sprites):
-                human_sprite.set_movement_speed(human_movement_speeds[index])
+            
+            # if horizontal_car_sprites.sprites()[2].get_height() != car.get_height():
+            #     horizontal_car_sprites.sprites()[2].start()
+                    
+
+            # # update the movement speed of each human
+            # for index, human_sprite in enumerate(human_sprites):
+            #     human_sprite.set_movement_speed(human_movement_speeds[index])
+
+            # print( horizontal_car_sprites.sprites()[0].get_height() - horizontal_car_sprites.sprites()[3].get_height() )
+            is_hit(horizontal_car_sprites.sprites()[0], horizontal_car_sprites.sprites()[3])
+            
+            is_hit(vertical_car_sprites.sprites()[0], vertical_car_sprites.sprites()[3], up=True)
+            
+            if is_hit_pedestrian(human_sprites.sprites()[0], vertical_car_sprites.sprites()[3]) < 60:
+                human_sprites.sprites()[0].set_movement_speed(3)
+
+            if is_hit_pedestrian(human_sprites.sprites()[1], horizontal_car_sprites.sprites()[0]) < 60:
+                human_sprites.sprites()[1].set_movement_speed(3)
+                
+            if is_hit_pedestrian(human_sprites.sprites()[2], vertical_car_sprites.sprites()[0]) < 60:
+                human_sprites.sprites()[2].set_movement_speed(3)
+
+            if is_hit_pedestrian(human_sprites.sprites()[3], horizontal_car_sprites.sprites()[3]) < 60:
+                human_sprites.sprites()[3].set_movement_speed(3)
 
             # move the horizontal cars
             horizontal_car_sprites.update()
