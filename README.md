@@ -24,6 +24,17 @@ Our program is written in Python 3 and uses the Python GUI from the library "pyg
 
 Pedestrian and car traffic are both synced in such a way that they do not collide with one another, and cars will wait for pedestrians and other cars while turning. This is done by measuring the distance between the vehicles and pedestrians in a certain direction and ensuring that one stops and waits while the other one proceeds forward and moves out of range.
 
+To successfully run the game you need to:
+1. Create the virtual environment:
+    * _python -m venv venv_
+2. Activate the environment
+    * _./venv/Scripts/activate_ - Windows
+    * _source ./venv/bin/activate_ - Linux/Mac OS
+3. Install dependencies
+    * _pip install -r requirements.txt_ 
+4. Run the game:
+    * _python game.py_ - Windows
+    * _python3 game.py_ - Linux/Mac OS
 # Results/Conclusion
 We can see from our program that, even when the rules of the road are followed, our traffic intersection still requires a lot of human input to remain safe and secure. For instance, when a pedestrian is crossing the street parallel to vehicle traffic, it is still possible for a car to make a right turn and intersect the path of the crosswalk. In order to prevent a collision between a car and a pedestrian, either the car or the pedestrian must wait for the other one to pass before they themselves can move on their way. In real life, this is mitigated with the concept of right of way, which based on the mindsets of the pedestrians and drivers involved at a given time, and the order in which drivers and pedestrians cross may not always be deterministic. 
 
