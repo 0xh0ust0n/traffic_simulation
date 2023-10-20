@@ -30,14 +30,17 @@ def is_hit(car_l, car_r, up = False):
         else:
             car_r.stop_car() 
 
-def is_hit_pedestrian(car, pedestrian):
+def is_hit_pedestrian(pedestrian, car):
     car_vector = pygame.math.Vector2(car.rect.top, car.rect.left)
     pedestrian_vector = pygame.math.Vector2(pedestrian.rect.top, pedestrian.rect.left)
 
     distance = pedestrian_vector.distance_to(car_vector)
 
-    if distance < 30:
+    if distance < 70:
+        car.stop_car()    
         print(f"Distance: {distance}")
+    elif distance > 70 and distance < 100:
+        car.start_car()
     return distance
 
 # screen config
@@ -92,7 +95,7 @@ def loop(screen, clock):
             'rotate'   : 0,
             'scale'    : 1,
             'position' : (0, config.get_height() / 2 - 20 ),
-            'x_update' : movement_speed,
+            'x_update' : movement_speed * 1,
             'y_update' : movement_speed * 0,
             'turn' : True,
             'turn_position': (config.get_width() / 2 + 75, config.get_height() / 2 - 20),
