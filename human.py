@@ -40,7 +40,6 @@ class Human(pygame.sprite.Sprite):
         if self.rect.left > self.config.get_width() - 350:
             self.reset_movement_speed()
             self.rect.right = self.human_config['position'][0]
-         
 
         if self.rect.top > self.config.get_height() - 235:
             self.reset_movement_speed()
@@ -60,10 +59,6 @@ class Human(pygame.sprite.Sprite):
 
     # set the X and Y movement speed of the human
     def set_movement_speed(self, scaling_factor):
-  
-        # if speeds[0] != self.human_config['x_update'] or speeds[1] != self.human_config['y_update']:
-        #     self.rect.left = self.human_config['position'][0]
-        #     self.rect.top = self.human_config['position'][1]
 
         self.x_update = scaling_factor * self.human_config['x_update']
         self.y_update = scaling_factor * self.human_config['y_update']
