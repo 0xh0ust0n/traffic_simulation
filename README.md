@@ -11,12 +11,13 @@ William Kanieski (wck26@case.edu):
 * Wrote majority of markdown file and helped debug code
 
 Both:
-* Put together the logic design for the application (traffic light sequence, et cetera)
+* Put together the logic design for the application (traffic light sequence, pedestrian/car syncing, et cetera)
 
 # Specification
 The purpose of this program is to visualize road and pedestrian traffic at an intersection in the context of secure versus insecure states. It allows the user to see how traffic can be seen as a sequence of secure states that, when followed in practice, lead to a safe road where cars and pedestrians do not collide and are safely able to reach their destinations. This simulation includes left and right turns as well as straight-moving traffic and displays the traffic lights shown to the pedestrians and drivers.
 
 # Design
+Our program depicts a cartoon of a four-way intersection complete with multi-colored cars traversing the streets and miniature pedestrian sprites clustered along the sidewalks. Each of the four intersecting lanes of traffic has a corresponding red/yellow/green stoplight on the upper right part of its sidewalk which controls the traffic for that lane. The stoplights transition from green to yellow to red and back, with at least one light being red at any given time. Cars in the center lane can make left turns, and cars in the regular lane can make right turns. Pedestrians always move parallel to whatever lane of cars currently has a green light. 
 
 # Implementation
 Our program is written in Python 3 and uses the Python GUI from the library "pygame" version 2.5.2. The background is a four-way intersection drawn using Microsoft Paint to have certain dimensions to fit the car lanes and pedestrian sidewalks. A constant number of car sprites are used, and when they reach the opposite ends of the canvas they go off screen and respawn back where they started. The code utilizes Python's random library to generate new colors for incoming cars in all lanes. 
