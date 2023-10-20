@@ -16,19 +16,36 @@ from pygame.locals import (
     QUIT,
 )
 
-def is_hit(car_l, car_r, up = False):
+def is_hit(car_l, car_r, up = False, down = False):
     print(car_r)
     
-    if not up:
+    if not up and not down:
         if car_l.rect.top <= car_r.rect.top:
             car_r.start_car()
+            # return True
         else:
             car_r.stop_car()
-    else:
+            # return False
+    elif up == True:
         if car_l.rect.left >= car_r.rect.left:
             car_r.start_car()
+            # return True
         else:
             car_r.stop_car() 
+            # return False
+
+def is_hit_triange(car_l, car_r):
+    car_l_vector = pygame.math.Vector2(car_l.rect.top, car_l.rect.right)     
+    car_r_vector = pygame.math.Vector2(car_r.rect.top, car_r.rect.left)     
+
+    distance = car_l_vector.distance_to(car_r_vector)
+
+    if distance < 200:
+        print(f"Car distance: {distance}")
+        car_l.stop_car()
+    elif distance > 200 and distance < 250:
+        car_l.start_car()
+
 
 def is_hit_pedestrian(pedestrian, car):
     car_vector = pygame.math.Vector2(car.rect.top, car.rect.left)
@@ -111,7 +128,8 @@ def loop(screen, clock):
             'position' : (0, config.get_height() / 2 + 50 ),
             'x_update' : movement_speed,
             'y_update' : movement_speed * 0,
-            'turn' : False,
+            'turn' : 'right',
+            'turn_position' : (config.get_width() / 2 - 140, config.get_height()/2 + 50),
             'start' : 1
 
         },
@@ -414,6 +432,10 @@ def loop(screen, clock):
             
             is_hit(vertical_car_sprites.sprites()[0], vertical_car_sprites.sprites()[3], up=True)
             
+            is_hit_triange(horizontal_car_sprites.sprites()[1], horizontal_car_sprites.sprites()[3])
+            # if res == True:
+            #     print('Left stopped')
+
             if is_hit_pedestrian(human_sprites.sprites()[0], vertical_car_sprites.sprites()[3]) < 60:
                 human_sprites.sprites()[0].set_movement_speed(3)
 
@@ -422,6 +444,9 @@ def loop(screen, clock):
                 
             if is_hit_pedestrian(human_sprites.sprites()[2], vertical_car_sprites.sprites()[0]) < 60:
                 human_sprites.sprites()[2].set_movement_speed(3)
+
+            if is_hit_pedestrian(human_sprites.sprites()[2], horizontal_car_sprites.sprites()[1]) < 60:
+                human_sprites.sprites()[1].set_movement_speed(3)
 
             if is_hit_pedestrian(human_sprites.sprites()[3], horizontal_car_sprites.sprites()[3]) < 60:
                 human_sprites.sprites()[3].set_movement_speed(3)
