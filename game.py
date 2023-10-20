@@ -377,9 +377,11 @@ def loop(screen, clock):
                 for car in horizontal_car_sprites:
                     car.set_light('red')
 
+                # config for humans to move
                 human_sprites.sprites()[0].set_light('green')
                 human_sprites.sprites()[2].set_light('green')
 
+                # config for humans to stop
                 human_sprites.sprites()[1].set_light('red')
                 human_sprites.sprites()[3].set_light('red')
 
@@ -409,9 +411,11 @@ def loop(screen, clock):
 
                     car.set_light('green')
 
+                # config for humans to move
                 human_sprites.sprites()[1].set_light('green')
                 human_sprites.sprites()[3].set_light('green')
 
+                # config for humans to stop
                 human_sprites.sprites()[0].set_light('red')
                 human_sprites.sprites()[2].set_light('red')
                 human_movement_speeds = [(0, 0), (human_movement_speed, 0), (0, 0), (human_movement_speed * -1, 0)]
@@ -425,7 +429,7 @@ def loop(screen, clock):
                 for car in vertical_car_sprites:
                     car.set_light('red')  
 
-            # print( horizontal_car_sprites.sprites()[0].get_height() - horizontal_car_sprites.sprites()[3].get_height() )
+            # detect collisions between cars
             is_hit(horizontal_car_sprites.sprites()[0], horizontal_car_sprites.sprites()[3])
             
             is_hit(vertical_car_sprites.sprites()[0], vertical_car_sprites.sprites()[3], up=True)
@@ -434,6 +438,7 @@ def loop(screen, clock):
             
             is_hit_triange(horizontal_car_sprites.sprites()[1], horizontal_car_sprites.sprites()[3])
      
+            # detect collisions between car and human
             if is_hit_pedestrian(human_sprites.sprites()[0], vertical_car_sprites.sprites()[3]) < 60:
                 human_sprites.sprites()[0].set_movement_speed(3)
 

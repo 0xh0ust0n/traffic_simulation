@@ -62,7 +62,6 @@ class Car(pygame.sprite.Sprite):
 
         if self.turn == "right":
 
-            # (config.get_width() / 2 - 140, 0),
             # if the car is in the right area for turn 
             if abs(self.rect.left - self.car_config['position'][0]) > self.car_config['turn_position'][0] or abs(self.rect.top - self.car_config['position'][1]) > self.car_config['turn_position'][1]:
             # if self.rect.left in range(int(self.config.get_width() / 2 + 75 - 15), int(self.config.get_width() / 2 + 75 + 15) ):
