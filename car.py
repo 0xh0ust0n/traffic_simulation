@@ -28,15 +28,20 @@ class Car(pygame.sprite.Sprite):
         # y speed
         self.y_update = car_config['y_update']
 
+        # flag to start moving
+        self.start = car_config['start']
+
     def update(self):
         
         # move if the light is green
         if self.light == "green":
-            self.rect.move_ip(self.x_update, self.y_update)
+            if self.start == 1:
+                self.rect.move_ip(self.x_update, self.y_update)
 
         if self.light == 'yellow' :
+            if self.start == 1:
         # and not ( self.rect.left > self.config.get_width() or self.rect.right < 0 or self.rect.top > self.config.get_height() or self.rect.bottom < 0 ):
-            self.rect.move_ip(self.x_update, self.y_update)
+                self.rect.move_ip(self.x_update, self.y_update)
 
         
         # if turn config is enabled
@@ -58,29 +63,43 @@ class Car(pygame.sprite.Sprite):
 
         # check boundaries and update and reset the configuration
         if self.rect.left > self.config.get_width():
+            if self.x_update < 0 and self.turn == True:
+                return
             if self.light == 'green':
-                self.surf = self.reset()
+                 self.surf = self.reset()
             if self.light == 'yellow':
-                self.rect.move_ip(self.x_update, self.y_update)
+                if self.start == 1:
+                    self.rect.move_ip(self.x_update, self.y_update)
                 
 
         if self.rect.top > self.config.get_height():
+            if self.y_update < 0 and self.turn == True:
+                return
             if self.light == 'green':
                 self.surf = self.reset()    
-            if self.light == 'yellow':
-                self.rect.move_ip(self.x_update, self.y_update)
+            elif self.light == 'yellow':
+                if self.start == 1:
+                    self.rect.move_ip(self.x_update, self.y_update)
+
 
         if self.rect.right < 0:
+            if self.x_update > 0 and self.trun == True:
+                return
             if self.light == 'green':
                 self.surf = self.reset()
-            if self.light == 'yellow':
-                self.rect.move_ip(self.x_update, self.y_update)
+            elif self.light == 'yellow':
+                if self.start == 1:
+                    self.rect.move_ip(self.x_update, self.y_update)
 
         if self.rect.bottom < 0:
+            if self.y_update > 0 and self.trun == True:
+                return 
             if self.light == 'green':
                 self.surf = self.reset()
-            if self.light == 'yellow':
-                self.rect.move_ip(self.x_update, self.y_update)
+            elif self.light == 'yellow':
+                if self.start == 1:
+                    self.rect.move_ip(self.x_update, self.y_update)
+
 
     # return the rectangle coordinates to draw
     def get_rect(self):
@@ -111,8 +130,10 @@ class Car(pygame.sprite.Sprite):
         # assign turn status
         self.turn = self.car_config['turn']
 
-        # reset speed configurations
+        # status of the car - moving or not
+        self.start = self.car_config['start']
 
+        # reset speed configurations
         self.y_update = self.car_config['y_update']
         self.x_update = self.car_config['x_update']
         
@@ -123,3 +144,15 @@ class Car(pygame.sprite.Sprite):
 
     def get_status(self):
         return self.status
+
+    def start_car(self):
+        self.start = 1
+    
+    def stop_car(self):
+        self.start = 0
+
+    def get_height(self):
+        return self.rect.top
+    
+    def get_width(self):
+        return self.rect.right
